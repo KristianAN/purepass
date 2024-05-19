@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Vault (PasswordVault (..), VaultState) where
+module Vault (PasswordVault (..), VaultState, getDecrypted, insertEncrypted) where
 
 import Control.Concurrent (modifyMVar, readMVar)
 import Control.Monad.IO.Class (MonadIO (liftIO))
@@ -12,14 +12,27 @@ import GHC.MVar (MVar (MVar), readMVar)
 import PasswordGenerator (PwFlags (RandomPwFlag), RandomPw (..), generateForRandom)
 
 -- Encrypt a string using botan bindings
-encrypt :: String -> IO String
-encrypt = pure
+encrypt :: (Monad m) => String -> String -> m String
+encrypt key = pure
 
 -- Decrypt a string using botan bindings
-decrypt :: String -> IO String
-decrypt = pure
+decrypt :: (Monad m) => String -> String -> m String
+decrypt key = pure
 
-data DeleteRes = Success | Failure
+insertEncrypted :: (PasswordVault m s, Monad m) => s -> String -> String -> m (Maybe String)
+insertEncrypted vault key pw = do
+  encryptedPw <- encrypt key pw
+  maybeInserted <- Vault.insert vault key encryptedPw
+  case maybeInserted of
+    Just pw -> fmap Just (decrypt key pw)
+    Nothing -> pure Nothing
+
+getDecrypted :: (PasswordVault m s, Monad m) => s -> String -> m (Maybe String)
+getDecrypted vault key = do
+  mPw <- get vault key
+  case mPw of
+    Just pw -> fmap Just (decrypt key pw)
+    Nothing -> pure Nothing
 
 class PasswordVault m s where
   get :: s -> String -> m (Maybe String)
@@ -57,7 +70,7 @@ selectPw :: Connection -> String -> IO (Maybe String)
 selectPw conn target = do
   res <- query conn "select password from passwords where target = ?" (Only target) :: IO [Only String]
   case res of
-    [Only str] -> traverse decrypt $ Just str
+    [Only str] -> pure $ Just str
     _ -> pure Nothing
 
 updatePw :: Connection -> String -> String -> IO (Maybe String)
@@ -77,7 +90,7 @@ newtype VaultState = VaultState (MVar (Map String String))
 instance PasswordVault IO VaultState where
   get (VaultState mvar) key = do
     map <- readMVar mvar
-    traverse decrypt (Map.lookup key map)
+    pure $ Map.lookup key map
 
   insert (VaultState mvar) target pw =
     modifyMVar mvar $ \state ->

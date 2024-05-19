@@ -4,7 +4,7 @@ module VaultSpec where
 
 import Database.SQLite.Simple
 import Test.Hspec
-import Vault (PasswordVault (..))
+import Vault (PasswordVault (..), getDecrypted, insertEncrypted)
 
 setup :: IO Connection
 setup = do
@@ -35,3 +35,12 @@ spec = before setup $
       _ <- update conn "testFour" "TestFourPwUpdated"
       res <- get conn "testFour"
       res `shouldBe` Just "TestFourPwUpdated"
+
+    it "can get decrypted pw" $ \conn -> do
+      _ <- insert conn "testFive" "testFivePw"
+      res <- getDecrypted conn "testFive"
+      res `shouldBe` Just "testFivePw"
+
+    it "can insert and encrypt pw" $ \conn -> do
+      res <- insertEncrypted conn "testSix" "testSixPw"
+      res `shouldBe` Just "testSixPw"
