@@ -16,7 +16,7 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
-library 
+library purepass-lib
   hs-source-dirs: src
   exposed-modules:
     CLI,
@@ -38,6 +38,26 @@ executable purepass
     build-depends:    
       base ^>=4.18.2.0,
       sqlite-simple ^>= 0.4.19.0,
-      purepass
+      purepass-lib
     hs-source-dirs:   app
     default-language: GHC2021
+
+test-suite tests
+  hs-source-dirs: tests
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  default-language: GHC2021
+  other-modules:
+    VaultSpec
+  build-depends:    
+      base ^>=4.18.2.0,
+      sqlite-simple ^>= 0.4.19.0,
+      purepass-lib,
+      hspec,
+      hspec-discover
+  ghc-options:
+    -O -threaded -rtsopts -with-rtsopts=-N
+  build-tool-depends:
+    hspec-discover:hspec-discover
+
+

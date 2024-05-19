@@ -33,7 +33,7 @@ instance PasswordVault IO Connection where
   get = selectPw
   insert = insertPw
   update = updatePw
-  delete conn taget = undefined
+  delete = deletePw
   listAllTargets conn = selectAllTargets conn <&> Prelude.map fromOnly
 
 -- db Schema

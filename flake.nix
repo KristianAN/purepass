@@ -22,6 +22,7 @@
           hPkgs.implicit-hie # auto generate LSP hie.yaml file from cabal
           hPkgs.retrie # Haskell refactoring tool
           hPkgs.cabal-install
+          hPkgs.hspec-discover
           pkgs.zlib # External C library needed by some Haskell packages
         ];
 
