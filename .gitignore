@@ -1,4 +1,4 @@
 dist-newstyle/
 .direnv/
-db.sql/
+db.sql
 
