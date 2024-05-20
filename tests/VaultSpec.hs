@@ -2,6 +2,8 @@
 
 module VaultSpec where
 
+import Control.Exception (SomeException, try)
+import Data.Either (isLeft, isRight)
 import Database.SQLite.Simple
 import Test.Hspec
 import Vault (PasswordVault (..))
@@ -35,3 +37,8 @@ spec = before setup $
       _ <- update conn "key" "testFour" "TestFourPwUpdated"
       res <- get conn "key" "testFour"
       res `shouldBe` Just "TestFourPwUpdated"
+
+    it "fetching password with incorrect key fails" $ \conn -> do
+      _ <- insert conn "key" "testFive" "testFivePw"
+      res <- get conn "wrongkey" "testFive" -- :: IO (Either SomeException (Maybe String))
+      res `shouldNotBe` Just "testFivePw"
