@@ -21,13 +21,19 @@ library purepass-lib
   exposed-modules:
     CLI,
     Vault,
+    Crypto,
     PasswordGenerator
   build-depends:
     base ^>=4.18.2.0,
     containers,
     random,
+    bytestring,
+    memory,
+    sandi,
+    text,
     optparse-applicative ^>=0.18.1.0,
-    sqlite-simple ^>= 0.4.19.0
+    sqlite-simple ^>= 0.4.19.0,
+    crypton
   default-language: GHC2021
 
 executable purepass

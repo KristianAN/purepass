@@ -16,7 +16,7 @@ spec :: Spec
 spec = before setup $
   describe "Tests for vault using sqlite" $ do
     it "can insert a password" $ \conn -> do
-      res <- insert conn "key" "testOne" "testOnePw"
+      res <- insert conn "amuchlongerkeythatwecanuse" "testOne" "testOnePw"
       res `shouldBe` Just "testOnePw"
 
     it "can get inserted pw" $ \conn -> do
