@@ -4,7 +4,7 @@ module VaultSpec where
 
 import Database.SQLite.Simple
 import Test.Hspec
-import Vault (PasswordVault (..), getDecrypted, insertEncrypted)
+import Vault (PasswordVault (..))
 
 setup :: IO Connection
 setup = do
@@ -16,31 +16,22 @@ spec :: Spec
 spec = before setup $
   describe "Tests for vault using sqlite" $ do
     it "can insert a password" $ \conn -> do
-      res <- insert conn "testOne" "testOnePw"
+      res <- insert conn "key" "testOne" "testOnePw"
       res `shouldBe` Just "testOnePw"
 
     it "can get inserted pw" $ \conn -> do
-      _ <- insert conn "testTwo" "testTwoPw"
-      res <- get conn "testTwo"
+      _ <- insert conn "key" "testTwo" "testTwoPw"
+      res <- get conn "key" "testTwo"
       res `shouldBe` Just "testTwoPw"
 
     it "can delete inserted pw" $ \conn -> do
-      _ <- insert conn "testThree" "testThreePw"
+      _ <- insert conn "key" "testThree" "testThreePw"
       _ <- delete conn "testThree"
-      res <- get conn "testThree"
+      res <- get conn "key" "testThree"
       res `shouldBe` Nothing
 
     it "can update inserted pw" $ \conn -> do
-      _ <- insert conn "testFour" "testFourPw"
-      _ <- update conn "testFour" "TestFourPwUpdated"
-      res <- get conn "testFour"
+      _ <- insert conn "key" "testFour" "testFourPw"
+      _ <- update conn "key" "testFour" "TestFourPwUpdated"
+      res <- get conn "key" "testFour"
       res `shouldBe` Just "TestFourPwUpdated"
-
-    it "can get decrypted pw" $ \conn -> do
-      _ <- insert conn "testFive" "testFivePw"
-      res <- getDecrypted conn "testFive"
-      res `shouldBe` Just "testFivePw"
-
-    it "can insert and encrypt pw" $ \conn -> do
-      res <- insertEncrypted conn "testSix" "testSixPw"
-      res `shouldBe` Just "testSixPw"
