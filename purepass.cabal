@@ -20,6 +20,7 @@ library purepass-lib
   hs-source-dirs: src
   exposed-modules:
     CLI,
+    TUI,
     Vault,
     Crypto,
     PasswordGenerator
@@ -31,6 +32,9 @@ library purepass-lib
     memory,
     sandi,
     text,
+    brick,
+    vty >= 6.0,
+    vty-unix,
     optparse-applicative ^>=0.18.1.0,
     sqlite-simple ^>= 0.4.19.0,
     crypton
