@@ -17,6 +17,8 @@ common warnings
     ghc-options: -Wall
 
 library purepass-lib
+  data-files:
+    resources/words.json
   hs-source-dirs: src
   exposed-modules:
     CLI,
@@ -37,7 +39,8 @@ library purepass-lib
     vty-unix,
     optparse-applicative ^>=0.18.1.0,
     sqlite-simple ^>= 0.4.19.0,
-    crypton
+    crypton,
+    aeson
   default-language: GHC2021
 
 executable purepass
